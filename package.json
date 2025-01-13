@@ -1,0 +1,14 @@
+{
+  "name": "env-manager",
+  "version": "1.0.0",
+  "description": "A TypeScript-based module to manage environment variables with schema validation.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "keywords": ["env", "typescript", "nodejs", "npm-module"],
+  "author": "Vinicius Assunção (Grootbit)",
+  "license": "MIT"
+}
