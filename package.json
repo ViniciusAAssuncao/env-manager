@@ -1,6 +1,6 @@
 {
-  "name": "env-manager",
-  "version": "1.0.0",
+  "name": "env-manager-grootbit",
+  "version": "1.0.3",
   "description": "A TypeScript-based module to manage environment variables with schema validation.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
