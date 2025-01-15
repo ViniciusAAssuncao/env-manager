@@ -1,12 +1,13 @@
 # Env Manager - Grootbit
 
-**Env Manager** is a utility to manage and validate environment variables in your projects. It ensures your environment variables are correctly set up, reducing runtime errors caused by missing or invalid variables. 
+**Env Manager** is a utility to manage and validate environment variables in your projects. It ensures your environment variables are correctly set up, reducing runtime errors caused by missing or invalid variables.
 
 ---
 
 ## Features
 - **Schema-based Validation**: Define required variables and their types in a schema.
 - **Type Conversion**: Automatically converts strings to `integer`, `float`, `boolean`, or retains as `string`.
+- **Singleton Pattern**: Ensures a single instance of the manager is used throughout the project.
 - **Error Handling**: Alerts on missing or incorrectly formatted variables.
 - **Environment Cleanup**: Clears loaded environment variables from `process.env` after validation.
 
@@ -30,7 +31,7 @@ yarn add env-manager-grootbit
 
 ## Usage
 
-To use **Env Manager**, you must define a schema for your environment variables and instantiate the manager in your project’s entry point (e.g., `index.ts`).
+To use **Env Manager**, define a schema for your environment variables, initialize the manager using the Singleton pattern, and access validated variables across your project.
 
 ### Example
 
@@ -47,18 +48,26 @@ const schema = {
   DEBUG_MODE: { type: EnvType.BOOLEAN, required: false },
 };
 
-const envManager = new EnvManager(schema);
+EnvManager.init(schema);
 
 try {
-  const validatedEnv = envManager.validateAndLoad();
-  console.log("Validated Environment Variables:", validatedEnv);
+  const envs = EnvManager.envys;
+  console.log("Validated Environment Variables:", envs);
 } catch (error) {
   console.error("Environment validation failed:", error.message);
   process.exit(1);
 }
 ```
 
-2. **Run Your Project**  
+2. **Access the Singleton Instance**  
+Once initialized, the `EnvManager` provides access to validated environment variables via the static `envys` property.
+
+```typescript
+const envs = EnvManager.envys;
+console.log(envs.PORT); // Access validated variables safely
+```
+
+3. **Run Your Project**  
 Set environment variables in your `.env` file or directly in your system’s environment. Example:
 
 ```plaintext
@@ -78,6 +87,9 @@ npm start
 
 ## Key Concepts
 
+### Singleton Pattern
+The `EnvManager` now uses the Singleton pattern to ensure that a single instance of the manager is used throughout your project. You initialize the manager once with the `init` method and access the validated environment variables via the static `envys` property.
+
 ### Schema Definition
 The schema is an object where each key represents an environment variable. Each variable has the following properties:
 - **`type`**: The expected data type (`EnvType.STRING`, `EnvType.INTEGER`, `EnvType.FLOAT`, or `EnvType.BOOLEAN`).
@@ -91,24 +103,40 @@ The schema is an object where each key represents an environment variable. Each 
 | `EnvType.FLOAT`   | Numeric values, parsed as floats.   |
 | `EnvType.BOOLEAN` | `true` or `false` values.           |
 
-### Error Handling
-- **Missing Variables**: Throws an error if required variables are missing.
-- **Type Mismatch**: Throws an error if a variable’s value does not match the defined type.
+### Environment Variable Cleanup
+After validation, all environment variables defined in the schema are removed from `process.env` to prevent accidental access. Access them only through the `envys` property of the `EnvManager` class.
 
 ---
 
-## Environment Variable Cleanup
+## Error Handling
 
-After validation, all environment variables defined in the schema are removed from `process.env` to prevent accidental access. Access them only through the object returned by `validateAndLoad`.
+- **Missing Variables**: Throws an error if required variables are missing.
+- **Type Mismatch**: Throws an error if a variable’s value does not match the defined type.
+- **Extra Variables**: Logs a warning if additional variables are detected that are not defined in the schema.
+
+### Example Log:
+```plaintext
+Warning: Extra environment variables detected: UNSUPPORTED_KEY
+```
 
 ---
 
 ## Development Notes
 
-This module does not run as a standalone process. Instead, it integrates into your project as a library. Include it in your main entry file, define the schema, and instantiate the `EnvManager` class. The validation process is triggered when the project starts.
+This module integrates into your project as a library. Include it in your main entry file, define the schema, and initialize the `EnvManager` class. The validation process is triggered automatically when accessing the `envys` property.
+
+---
+
+## Changelog
+
+### v1.0.3
+- Introduced the Singleton pattern to ensure a single instance of `EnvManager`.
+- Added the static `envys` property for simplified access to validated variables.
+- Enhanced error handling and logging for extra environment variables.
 
 ---
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
