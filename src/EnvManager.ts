@@ -1,40 +1,57 @@
 import { EnvSchema, EnvType } from "./types";
 
 export class EnvManager {
+  private static instance: EnvManager | null = null;
   private schema: EnvSchema;
+  private loadedEnv: Record<string, any> | null = null;
 
-  constructor(schema: EnvSchema) {
+  private constructor(schema: EnvSchema) {
     this.schema = schema;
   }
 
+  public static getInstance(schema?: EnvSchema): EnvManager {
+    if (!EnvManager.instance) {
+      if (!schema) {
+        throw new Error("Schema must be provided when initializing EnvManager for the first time.");
+      }
+      EnvManager.instance = new EnvManager(schema);
+    }
+    return EnvManager.instance;
+  }
+
   public validateAndLoad(): Record<string, any> {
+    if (this.loadedEnv) {
+      return this.loadedEnv;
+    }
+
     const loadedEnv: Record<string, any> = {};
-  
+
     const extraKeys = Object.keys(process.env).filter(
       (key) => !(key in this.schema)
     );
     if (extraKeys.length > 0) {
       console.warn(`Warning: Extra environment variables detected: ${extraKeys.join(", ")}`);
     }
-  
+
     for (const [key, config] of Object.entries(this.schema)) {
       const envValue = process.env[key];
-  
+
       if (config.required && (envValue === undefined || envValue === null)) {
         throw new Error(`Environment variable "${key}" is required but not defined.`);
       }
-  
+
       if (!config.required && (envValue === undefined || envValue === null)) {
         continue;
       }
-  
+
       loadedEnv[key] = this.convertType(envValue!, config.type);
     }
-  
+
     this.cleanupProcessEnv();
-  
+    this.loadedEnv = loadedEnv;
+
     return loadedEnv;
-  }  
+  }
 
   private convertType(value: string, type: EnvType): any {
     switch (type) {
@@ -64,7 +81,7 @@ export class EnvManager {
       default:
         throw new Error(`Unsupported type "${type}" for environment variable "${value}".`);
     }
-  }  
+  }
 
   private cleanupProcessEnv(): void {
     for (const key of Object.keys(this.schema)) {
