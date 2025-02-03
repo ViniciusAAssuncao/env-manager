@@ -1,6 +1,6 @@
 {
   "name": "env-manager-grootbit",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A TypeScript-based module to manage environment variables with schema validation.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,17 @@
     "build": "tsc",
     "test": "echo \"No test specified\" && exit 0"
   },
-  "keywords": ["env", "typescript", "nodejs", "npm-module"],
+  "keywords": [
+    "env",
+    "typescript",
+    "nodejs",
+    "npm-module"
+  ],
   "author": "Vinicius Assunção (Grootbit)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
 }

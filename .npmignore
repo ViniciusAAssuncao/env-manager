@@ -1,0 +1,35 @@
+# Arquivos de desenvolvimento
+src/
+test/
+example.ts
+tsconfig.json
+*.config.js
+
+# Ambiente e logs
+.env
+.env.*
+logs/
+*.log
+
+# IDEs/Editores
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Sistemas operacionais
+.DS_Store
+Thumbs.db
+
+# Dependências e lock files (use apenas package.json publicado)
+node_modules/
+yarn.lock
+pnpm-lock.yaml
+
+# Builds antigos/alternativos (o diretório 'dist' NÃO deve ser ignorado!)
+coverage/
+build/
+out/
